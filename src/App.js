@@ -12,9 +12,9 @@ class BooksApp extends Component {
      * pages, as well as provide a good URL they can bookmark and share.
      */
     showSearchPage: false,
-    currentlyReadingBooksList: [],
-    wantToReadBooksList: [],
-    readBooksList: []
+    currentlyReading: [],
+    wantToRead: [],
+    read: []
   }
 
   componentDidMount() {
@@ -22,12 +22,36 @@ class BooksApp extends Component {
       .then(
         (books) => {
           this.setState((currentState) => ({
-            currentlyReadingBooksList: books.filter(b => b.shelf === 'currentlyReading'),
-            wantToReadBooksList: books.filter(b => b.shelf === 'wantToRead'),
-            readBooksList: books.filter(b => b.shelf === 'read'),
+            currentlyReading: books.filter(b => b.shelf === 'currentlyReading'),
+            wantToRead: books.filter(b => b.shelf === 'wantToRead'),
+            read: books.filter(b => b.shelf === 'read'),
           }))
         }
       )
+  }
+
+  onChangeShelf = (book, newShelfName) => {
+    const oldShelfName = book.shelf
+    BooksAPI.update(book, newShelfName)
+    if (newShelfName !== 'none') {
+      /*
+        No caso da remoção de livros das prateleiras, não é necessário adicioná-lo em uma lista de nome 'none'.
+        A aplicação nem salva os livros sem prateleira para poupar recursos e priorizar a performance.
+      */
+      this.setState((currentState) => ({
+        [newShelfName]: currentState[newShelfName].concat(book),
+      }))
+    }
+    /*
+      Em todos os casos, deve-se remover o livro da prateleira antiga
+    */
+    this.setState((currentState) => ({
+      [oldShelfName]: currentState[oldShelfName].filter(b => b.id !== book.id)
+    }))
+    /*
+      Setando o atributo 'shelf' do livro, para que o select marque o valor correspondente à nova prateleira.
+    */
+    book.shelf = newShelfName
   }
 
   render() {
@@ -61,9 +85,9 @@ class BooksApp extends Component {
             </div>
             <div className="list-books-content">
               <div>
-                <Shelf title='Currently Reading' books={this.state.currentlyReadingBooksList} />
-                <Shelf title='Want to Read' books={this.state.wantToReadBooksList} />
-                <Shelf title='Read' books={this.state.readBooksList} />
+                <Shelf title='Currently Reading' books={this.state.currentlyReading} onChangeShelf={this.onChangeShelf} />
+                <Shelf title='Want to Read' books={this.state.wantToRead} onChangeShelf={this.onChangeShelf} />
+                <Shelf title='Read' books={this.state.read} onChangeShelf={this.onChangeShelf} />
               </div>
             </div>
             <div className="open-search">
