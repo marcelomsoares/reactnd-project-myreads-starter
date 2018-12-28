@@ -30,11 +30,13 @@ class BooksApp extends Component {
       .then((b) => {
         let oldShelfName = b.shelf
         BooksAPI.update(b, newShelfName)
-        if (oldShelfName !== undefined) {
-          this.setState((currentState) => ({
-            [oldShelfName]: currentState[oldShelfName].filter(x => x.id !== b.id)
-          }))
-        }
+        /*
+          Em todos os casos, deve-se remover o livro da prateleira antiga
+          TODO: REMOVER A VERIFICACAO SE !== undefined QUANDO OS LIVROS VIEREM COM SUAS RESPECTIVAS PRATELEIRAS
+        */
+        this.setState((currentState) => ({
+          [oldShelfName]: currentState[oldShelfName].filter(x => x.id !== b.id)
+        }))
         if (newShelfName !== 'none') {
           /*
             No caso da remoção de livros das estantes, não é necessário adicioná-lo em uma lista de nome 'none'.
@@ -54,13 +56,10 @@ class BooksApp extends Component {
     BooksAPI.update(book, newShelfName)
     /*
       Em todos os casos, deve-se remover o livro da prateleira antiga
-      TODO: REMOVER A VERIFICACAO SE !== undefined QUANDO OS LIVROS VIEREM COM SUAS RESPECTIVAS PRATELEIRAS
     */
-    if (oldShelfName !== undefined) {
-      this.setState((currentState) => ({
-        [oldShelfName]: currentState[oldShelfName].filter(b => b.id !== book.id)
-      }))
-    }
+    this.setState((currentState) => ({
+      [oldShelfName]: currentState[oldShelfName].filter(b => b.id !== book.id)
+    }))
     if (newShelfName !== 'none') {
       /*
         No caso da remoção de livros das estantes, não é necessário adicioná-lo em uma lista de nome 'none'.

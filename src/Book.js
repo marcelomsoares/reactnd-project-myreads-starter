@@ -29,11 +29,13 @@ class Book extends Component {
     }))
   }
 
+  // alternativa para só buscar a estante quando clicar no select do livro
+  // só seta quando se abre o select a segunda vez
   getShelfInfo = (event) => {
-    console.log('getting shelf info...')
+    console.log('buscando dados do livro pela API...')
     BooksAPI.get(this.props.bookId)
       .then((b) => {
-        console.log(b.shelf)
+        console.log(`...o livro se encontra na prateleira '${b.shelf}'`)
         this.setState(currentState => ({
           shelfName: b.shelf
         }))
