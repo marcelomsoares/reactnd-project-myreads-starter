@@ -3,6 +3,7 @@ import { Route, withRouter } from 'react-router-dom'
 import * as BooksAPI from './BooksAPI'
 import './App.css'
 import Shelf from './Shelf'
+import Search from './Search'
 
 class BooksApp extends Component {
   state = {
@@ -38,10 +39,13 @@ class BooksApp extends Component {
     }
     /*
       Em todos os casos, deve-se remover o livro da prateleira antiga
+      TODO: REMOVER A VERIFICACAO SE !== undefined QUANDO OS LIVROS VIEREM COM SUAS RESPECTIVAS PRATELEIRAS
     */
-    this.setState((currentState) => ({
-      [oldShelfName]: currentState[oldShelfName].filter(b => b.id !== book.id)
-    }))
+    if (oldShelfName !== undefined) {
+      this.setState((currentState) => ({
+        [oldShelfName]: currentState[oldShelfName].filter(b => b.id !== book.id)
+      }))
+    }
     /*
       Setando o atributo 'shelf' do livro, para que o select marque o valor correspondente à nova prateleira.
     */
@@ -53,29 +57,11 @@ class BooksApp extends Component {
       <div className="app">
         <Route path='/search'
           render={() => (
-            <div className="search-books">
-              <div className="search-books-bar">
-                <button className="close-search" onClick={() => this.props.history.push('/')}>Close</button>
-                <div className="search-books-input-wrapper">
-                  {/*
-                    NOTES: The search from BooksAPI is limited to a particular set of search terms.
-                    You can find these search terms here:
-                    https://github.com/udacity/reactnd-project-myreads-starter/blob/master/SEARCH_TERMS.md
+            <Search
+              onChangeShelf={this.onChangeShelf}
+             />
+          )} />
 
-                    However, remember that the BooksAPI.search method DOES search by title or author. So, don't worry if
-                    you don't find a specific author or title. Every search is limited by search terms.
-                  */}
-                  <input type="text" placeholder="Search by title or author"/>
-
-                </div>
-              </div>
-              <div className="search-books-results">
-                <ol className="books-grid">
-
-                </ol>
-              </div>
-          </div>
-          )}/>
         <Route exact path='/'
           render={() => (
             <div className="list-books">
