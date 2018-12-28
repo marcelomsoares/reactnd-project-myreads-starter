@@ -19,7 +19,7 @@ class Search extends Component {
             searchResults: b
           }))
         } else {
-          // caso a resposta seja o objeto com a mensagem de erro
+          // caso a resposta seja o objeto com a mensagem de que a busca não recebeu resultados
           this.setState((currentState) => ({
             searchResults: []
           }))
@@ -54,9 +54,9 @@ class Search extends Component {
           {this.state.searchResults.map((book) => (
             <li key={book.id}>
               <Book
-                thumbnail={book.imageLinks.thumbnail}
+                thumbnail={book.imageLinks !== undefined ? book.imageLinks.thumbnail : ''}
                 title={book.title} authors={book.authors}
-                shelfName={book.shelf}
+                bookId={book.id}
                 changeShelf={(event) => changeShelf(book, event.target.value)}
               />
             </li>

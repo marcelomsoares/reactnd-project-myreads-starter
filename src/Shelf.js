@@ -18,6 +18,7 @@ class Shelf extends Component {
                   thumbnail={book.imageLinks.thumbnail}
                   title={book.title} authors={book.authors}
                   shelfName={book.shelf}
+                  bookId={book.id}
                   changeShelf={(event) => changeShelf(book, event.target.value)}
                 />
               </li>

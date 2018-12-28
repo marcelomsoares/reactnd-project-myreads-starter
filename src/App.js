@@ -25,18 +25,33 @@ class BooksApp extends Component {
       )
   }
 
+  onSetShelfFromSearch = (book, newShelfName) => {
+    BooksAPI.get(book.id)
+      .then((b) => {
+        let oldShelfName = b.shelf
+        BooksAPI.update(b, newShelfName)
+        if (oldShelfName !== undefined) {
+          this.setState((currentState) => ({
+            [oldShelfName]: currentState[oldShelfName].filter(x => x.id !== b.id)
+          }))
+        }
+        if (newShelfName !== 'none') {
+          /*
+            No caso da remoção de livros das estantes, não é necessário adicioná-lo em uma lista de nome 'none'.
+            A aplicação nem salva os livros sem prateleira para poupar recursos e priorizar a performance.
+          */
+          this.setState((currentState) => ({
+            [newShelfName]: currentState[newShelfName].concat(b),
+          }))
+        }
+        b.shelf = newShelfName
+      })
+  }
+
   onChangeShelf = (book, newShelfName) => {
     const oldShelfName = book.shelf
+    console.log(`Livro de id=${book.id} mudou da prateleira '${oldShelfName}' para '${newShelfName}'`)
     BooksAPI.update(book, newShelfName)
-    if (newShelfName !== 'none') {
-      /*
-        No caso da remoção de livros das estantes, não é necessário adicioná-lo em uma lista de nome 'none'.
-        A aplicação nem salva os livros sem prateleira para poupar recursos e priorizar a performance.
-      */
-      this.setState((currentState) => ({
-        [newShelfName]: currentState[newShelfName].concat(book),
-      }))
-    }
     /*
       Em todos os casos, deve-se remover o livro da prateleira antiga
       TODO: REMOVER A VERIFICACAO SE !== undefined QUANDO OS LIVROS VIEREM COM SUAS RESPECTIVAS PRATELEIRAS
@@ -44,6 +59,15 @@ class BooksApp extends Component {
     if (oldShelfName !== undefined) {
       this.setState((currentState) => ({
         [oldShelfName]: currentState[oldShelfName].filter(b => b.id !== book.id)
+      }))
+    }
+    if (newShelfName !== 'none') {
+      /*
+        No caso da remoção de livros das estantes, não é necessário adicioná-lo em uma lista de nome 'none'.
+        A aplicação nem salva os livros sem prateleira para poupar recursos e priorizar a performance.
+      */
+      this.setState((currentState) => ({
+        [newShelfName]: currentState[newShelfName].concat(book),
       }))
     }
     /*
@@ -58,7 +82,7 @@ class BooksApp extends Component {
         <Route path='/search'
           render={() => (
             <Search
-              onChangeShelf={this.onChangeShelf}
+              onChangeShelf={this.onSetShelfFromSearch}
              />
           )} />
 
