@@ -18,15 +18,21 @@ class Book extends Component {
     return authors === undefined ? 'n/a' : authors.join(', ')
   }
 
+  updateOptionAndChangeShelf(newShelf) {
+    this.setState(currentState => ({
+      shelfName: newShelf
+    }))
+    this.props.changeShelf(this.props.book, newShelf)
+  }
+
   render() {
-    const onChangeShelf = this.props.changeShelf
 
     return (
       <div className="book">
         <div className="book-top">
           <div className="book-cover" style={{ width: 128, height: 193, backgroundImage: `url(${this.props.thumbnail})` }}></div>
           <div className="book-shelf-changer">
-            <select value={this.state.shelfName} onChange={onChangeShelf}>
+            <select value={this.state.shelfName} onChange={(event) => this.updateOptionAndChangeShelf(event.target.value)}>
               <option value="move" disabled>Move to...</option>
               <option value="currentlyReading">Currently Reading</option>
               <option value="wantToRead">Want to Read</option>

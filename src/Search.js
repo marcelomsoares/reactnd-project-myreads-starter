@@ -51,11 +51,6 @@ class Search extends Component {
     })
   }
 
-  updateAndChangeShelf(book, newShelf) {
-    this.props.onChangeShelf(book, newShelf)
-    book.shelf = newShelf
-  }
-
   render() {
 
     return (
@@ -85,7 +80,8 @@ class Search extends Component {
                 thumbnail={book.imageLinks !== undefined ? book.imageLinks.thumbnail : ''}
                 title={book.title} authors={book.authors}
                 bookId={book.id} shelfName={book.shelf}
-                changeShelf={(event) => this.updateAndChangeShelf(book, event.target.value)}
+                changeShelf={this.props.onChangeShelf}
+                book={book}
               />
             </li>
           ))}
