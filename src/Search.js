@@ -52,8 +52,8 @@ class Search extends Component {
   }
 
   updateAndChangeShelf(book, newShelf) {
-
     this.props.onChangeShelf(book, newShelf)
+    book.shelf = newShelf
   }
 
   render() {

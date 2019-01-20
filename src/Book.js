@@ -14,12 +14,6 @@ class Book extends Component {
     }
   }
 
-  changeShelf = (event) => {
-    this.setState((currentState) => ({
-      shelfName: event.target.value
-    }))
-  }
-
   printAuthors(authors) {
     return authors === undefined ? 'n/a' : authors.join(', ')
   }
