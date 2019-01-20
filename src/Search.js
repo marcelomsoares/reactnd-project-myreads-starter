@@ -15,6 +15,7 @@ class Search extends Component {
       .then((b) => {
         if (Array.isArray(b)) {
           // caso haja resultados para a busca, a resposta vem em formato de Array
+          this.getBooksShelf(b)
           this.setState((currentState) => ({
             searchResults: b
           }))
@@ -27,8 +28,35 @@ class Search extends Component {
       })
   }
 
+  getBooksShelf(resultingArray) {
+    resultingArray.forEach(result => {
+      this.checkIfBookIsInArray(result, this.props.currentlyReadingBooks)
+      if (result.shelf === undefined) {
+        this.checkIfBookIsInArray(result, this.props.wantToReadBooks)
+      }
+      if (result.shelf === undefined) {
+        this.checkIfBookIsInArray(result, this.props.readBooks)
+      }
+      if (result.shelf === undefined) {
+        result.shelf = "none"
+      }
+    });
+  }
+
+  checkIfBookIsInArray(book, shelfArray) {
+    shelfArray.forEach(element => {
+      if (element.id === book.id) {
+        book.shelf = element.shelf
+      }
+    })
+  }
+
+  updateAndChangeShelf(book, newShelf) {
+
+    this.props.onChangeShelf(book, newShelf)
+  }
+
   render() {
-    const changeShelf = this.props.onChangeShelf
 
     return (
       <div className="search-books">
@@ -56,8 +84,8 @@ class Search extends Component {
               <Book
                 thumbnail={book.imageLinks !== undefined ? book.imageLinks.thumbnail : ''}
                 title={book.title} authors={book.authors}
-                bookId={book.id}
-                changeShelf={(event) => changeShelf(book, event.target.value)}
+                bookId={book.id} shelfName={book.shelf}
+                changeShelf={(event) => this.updateAndChangeShelf(book, event.target.value)}
               />
             </li>
           ))}
